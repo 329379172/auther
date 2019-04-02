@@ -34,6 +34,25 @@ class LoginState extends State<Login> {
   login(BuildContext context) async {
     print(username);
     print(password);
+    if (username == null || username.length == 0) {
+      Fluttertoast.showToast(
+        msg: "请输入用户名",
+        timeInSecForIos: 1,
+        gravity: ToastGravity.CENTER
+      );
+      print("请输入用户名");
+      return;
+    }
+
+    if (password == null || password.length == 0) {
+      Fluttertoast.showToast(
+        msg: "请输入密码",
+        timeInSecForIos: 1,
+        gravity: ToastGravity.CENTER
+      );
+      print("请输入密码");
+      return;
+    }
 
     Response<Map<String, dynamic>> res = await api_login(username, password);
     if (res.statusCode == 200) {
@@ -65,15 +84,17 @@ class LoginState extends State<Login> {
         body: new Container(
           child: new Column(
             children: <Widget>[
+              new Padding(padding: new EdgeInsets.only(top: 10),),
               new CustomTextInput(
                 hintText: '请输入用户名',
                 iconPath: 'images/denglu_shouji.png',
                 keyBoardType: 'phone',
                 onChange: (value) {
-                  print("value=${value}");
+                  print("value=$value");
                   username = value;
                 },
               ),
+              new Padding(padding: new EdgeInsets.only(top: 10),),
               new CustomTextInput(
                 hintText: '请输入密码',
                 iconPath: 'images/denglu_mima.png',
@@ -82,7 +103,13 @@ class LoginState extends State<Login> {
                   password = value;
                 },
               ),
-              new FlatButton(onPressed: (){this.login(context);}, child: new Text("登录")),
+              new Padding(padding: new EdgeInsets.only(top: 10),),
+              new FlatButton(
+                onPressed: () { this.login(context); }, 
+                child:  new Container(width: 300, height: 40, decoration:  new BoxDecoration(
+                  gradient: new LinearGradient(colors: [Colors.blueAccent,Colors.lightBlue]),
+                  borderRadius: new BorderRadius.all(new Radius.circular(20)),
+                ), child: new Center(child: new Text("登录", style: new TextStyle(color: Colors.white, fontSize: 18))))),
             ],
           ),
         ),

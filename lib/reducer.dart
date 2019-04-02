@@ -88,10 +88,11 @@ AppData reducer(AppData appData, dynamic action) {
     //  list.add(new AuthData("ALJV23R4MGFM36UHXPXUXWHGSC5L2NMJ", "www.baidu${i}.com", OTP.generateTOTPCode("ALJV23R4MGFM36UHXPXUXWHGSC5L2NMJ", DateTime.now().millisecondsSinceEpoch).toString()));
     //}
     if (appData.authList == null || appData.authList.length == 0 || OTP.generateTOTPCode(appData.authList[0].key, DateTime.now().millisecondsSinceEpoch).toString() == appData.authList[0].code) {
-      print('不需要更新code!');
+      //print('不需要更新code!');
       return appData;
     }
     appData.authList.forEach((item) {
+      print(item.key);
       item.code = OTP.generateTOTPCode(item.key, DateTime.now().millisecondsSinceEpoch).toString(); 
       if (item.code.length < 6) {
         item.code = new List.filled(6 - item.code.length, '0').join('') + item.code;

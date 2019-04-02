@@ -86,3 +86,4 @@ flutter:
   assets:
     - images/denglu_shouji.png #登录框手机图标
     - images/denglu_mima.png #登录框密码图标
+    - images/avatar_bg.jpg

@@ -7,18 +7,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:dio/dio.dart';
-import 'package:otp/otp.dart';
 
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
-
 import 'package:flutter_redux/flutter_redux.dart';
 import 'reducer.dart';
 import 'store.dart';
+import 'addcode.dart';
 
 class Auther extends StatefulWidget {
+  
   @override
   State<StatefulWidget> createState() {
     return new AutherState();
@@ -67,9 +67,7 @@ class AutherState extends State<Auther> {
       store.dispatch(new InsertAuthData(new AuthData(
           secret,
           remark,
-          OTP
-              .generateTOTPCode(secret, DateTime.now().millisecondsSinceEpoch)
-              .toString(),
+          '000000',
           issuer)));
     } on PlatformException catch (ex) {
       if (ex.code == BarcodeScanner.CameraAccessDenied) {
@@ -82,6 +80,9 @@ class AutherState extends State<Auther> {
     }
   }
 
+  logout() {
+    store.dispatch(new LogoutAction());
+  }
 
   deleteData(int index) {
     print('delete $index');
@@ -190,6 +191,44 @@ class AutherState extends State<Auther> {
         child: new StoreConnector<AppData, AppData>(
             builder: (context, state) {
               return new Scaffold(
+                  drawer: new Drawer(
+                    child: new ListView(
+                      children: <Widget>[
+                        new UserAccountsDrawerHeader(
+                          accountName: Text("小薇识花"),
+                          accountEmail: Text("flutter@gmail.com"),
+                          currentAccountPicture: new GestureDetector(
+                            child: new CircleAvatar(
+                              backgroundImage: new ExactAssetImage("images/avatar_bg.jpg"),
+                            ),
+                          )
+                        ),
+                        new ListTile(
+                          title: new Text(state.accessToken != null ? "注销" : "登录"),
+                          leading: new Icon(Icons.person),
+                          onTap: () {
+                            if (state.accessToken != null) {
+                              this.logout();
+                            } else {
+                             Navigator.pushReplacement(
+                                    context,
+                                    new MaterialPageRoute(
+                                        builder: (context) => new Login())); 
+                            }
+                          },
+                        ),
+                        new Divider(),
+                        new ListTile(
+                          title: new Text("服务条款"),
+                          leading: new Icon(Icons.announcement),
+                        ),
+                        new ListTile(
+                          title: new Text("关于我们"),
+                          leading: new Icon(Icons.people),
+                        ),
+                      ],
+                    )
+                  ),
                   appBar: new AppBar(
                     title: new Text("Auther"),
                     leading: new InkWell(
@@ -213,7 +252,7 @@ class AutherState extends State<Auther> {
                                     leading: new Icon(Icons.edit),
                                     title: new Text("手动输入验证码"),
                                     onTap: () async {
-                                      Navigator.pop(context);
+                                      Navigator.pushReplacement(context, new MaterialPageRoute(builder: (context) => new AddAuthDataPage()));
                                     },
                                   ),
                                 ],
@@ -242,7 +281,7 @@ class AutherState extends State<Auther> {
                               ],
                             )
                           : new InkWell(
-                              child: new Center(child: new Text("登录")),
+                              child: new Container(child: new Center(child: new Text("登录", style: new TextStyle(fontSize: 16))), width: 40),
                               onTap: () {
                                 Navigator.push(
                                     context,
